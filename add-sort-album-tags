@@ -1,0 +1,33 @@
+#! /usr/bin/env python
+
+import os, sys, subprocess
+
+audio_endings = ('.mp3', '.m4a')
+
+def main(path):
+    for root, _, files in os.walk(path):
+        for name in files:
+            if name.endswith(audio_endings):
+                filename = os.path.join(root, name)
+
+                track_info = subprocess.check_output(['id3v2',
+                        '-l', filename]).strip()
+                tag_val_pairs = [entry.split(': ')
+                        for entry in track_info.split('\n')[1:-1]]
+                tags = {pair[0].split()[0] : pair[1].strip()
+                        for pair in tag_val_pairs}
+
+                sort_album = ''
+                if 'TYER' in tags.keys():
+                    year_reversed = 3000 - float(tags['TYER'])
+                    sort_album += '%d' % year_reversed + ' - '
+                if 'TALB' in tags.keys():
+                    sort_album += tags['TALB']
+
+                if sort_album:
+                    subprocess.Popen(['kid3-cli', '-c',
+                            'set "Sort Album" "%s"' % sort_album,
+                            filename])
+
+if __name__ == "__main__":
+    main(sys.argv[1])

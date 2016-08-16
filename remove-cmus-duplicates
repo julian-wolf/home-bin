@@ -1,0 +1,44 @@
+#! /usr/bin/env python
+
+import os, sys
+import sets
+from random import choice
+from string import digits
+
+local_drive_good = "/Volumes/Data HDD/Music"
+local_drive_bad = "/Users/julian/Data HDD/Music" # symlink to local_drive_good
+external_drive = "/Volumes/WD_Passport_Wolf/Music/Releases"
+
+def main(playlist):
+    local_songs = sets.Set()
+
+    playlist_temp = random_filename(playlist.partition('.')[0])
+    os.rename(playlist, playlist_temp)
+
+    with open(playlist_temp, 'rt') as pl_old:
+        with open(playlist, 'wt') as pl_new:
+            for line in pl_old:
+                song_name = line.strip().split('/')[-1]
+                if song_name not in local_songs:
+                    if line.startswith(local_drive_good):
+                        local_songs.add(song_name)
+                        pl_new.write(line)
+                    elif line.startswith(local_drive_bad):
+                        local_songs.add(song_name)
+                        pl_new.write(local_drive_good + line.split(local_drive_bad)[-1])
+
+            for line in pl_old:
+                song_name = line.strip().split('/')[-1]
+                if song_name not in local_songs and line.startswith(external_drive):
+                    pl_new.write(line)
+
+    os.remove(playlist_temp)
+
+def random_filename(base_name):
+    while True:
+        output = base_name + ''.join(choice(digits) for _ in range(5)) + '.temp'
+        if not os.path.isfile(output):
+            return output
+
+if __name__ == "__main__":
+    main(sys.argv[1])
