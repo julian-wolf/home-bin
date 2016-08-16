@@ -9,7 +9,10 @@
 #
 # So far, this has not been successful...
 
-import os, sys, subprocess
+import os, sys
+
+from mutagen.easyid3 import EasyID3 as mutagen_id3
+from string import lowercase as letters
 
 audio_endings = ('.mp3', '.m4a')
 
@@ -19,24 +22,40 @@ def main(path):
             if name.endswith(audio_endings):
                 filename = os.path.join(root, name)
 
-                track_info = subprocess.check_output(['id3v2',
-                        '-l', filename]).strip()
-                tag_val_pairs = [entry.split(': ')
-                        for entry in track_info.split('\n')[1:-1]]
-                tags = {pair[0].split()[0] : pair[1].strip()
-                        for pair in tag_val_pairs}
+                tags = mutagen_id3(filename)
 
-                sort_album = ''
-                if 'TYER' in tags.keys():
-                    year_reversed = 3000 - float(tags['TYER'])
-                    sort_album += '%d' % year_reversed + ' - '
-                if 'TALB' in tags.keys():
-                    sort_album += tags['TALB']
+                sort_album = u''
+                if 'date' in tags.keys():
+                    sort_album += tags['date'][0] + ' - '
+                if 'album' in tags.keys():
+                    sort_album += tags['album'][0]
+                else:
+                    continue
 
-                if sort_album:
-                    subprocess.Popen(['kid3-cli', '-c',
-                            'set "Sort Album" "%s"' % sort_album,
-                            filename])
+                tags['albumsort'] = [sort_album]
+                tags.save()
+
+                # if 'date' in tags.keys():
+                #     date = tags['date'][0]
+                #     date_reversed = 2100 - int(float(date))
+
+                #     date_mangled = number_to_digits(date_reversed)
+                #     date_mangled += " " + date
+
+                #     tags['date'] = [date_mangled]
+                #     tags.save()
+
+def number_to_digits(number):
+    assert(number > 0)
+
+    base = len(letters)
+    digits = []
+
+    while number:
+        digits.append(letters[number % base])
+        number /= base
+
+    return ''.join(reversed(digits))
 
 if __name__ == "__main__":
     main(sys.argv[1])
