@@ -1,5 +1,25 @@
 #! /usr/bin/env python
 
+# This script is meant to remove poorly-formatted and duplicate entries from
+# my cmus lib.pl file.
+#
+# I keep my entire music library on an external drive, along with a small
+# subset on my internal data drive. The internal drive is symlinked from
+# my home directory, but I prefer for cmus to only reference the drive by
+# its full path.
+#
+# This script places a few restraints on the library file:
+# [1] No album should appear twice. If an album exists on both my internal
+#     and my external drives, I prefer the internal version since it's
+#     always accessible. Any reference to an album on my external drive
+#     which is also present on my internal drive should be removed.
+# [2] No album on my internal drive should be referenced via the symlink
+#     from my home directory. Any reference to an album using the symlinked
+#     path shuold be replaced with a reference using the hard path; if this
+#     results in duplicate entries, they should be removed.
+#
+# So far, it seems to work...
+
 import os, sys
 import sets
 from random import choice
