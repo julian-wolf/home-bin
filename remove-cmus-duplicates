@@ -41,11 +41,14 @@ def main(playlist):
                 song_name = line.strip().split('/')[-1]
                 if song_name not in local_songs:
                     if line.startswith(local_drive_good):
-                        local_songs.add(song_name)
-                        pl_new.write(line)
+                        line_new = line
                     elif line.startswith(local_drive_bad):
-                        local_songs.add(song_name)
-                        pl_new.write(local_drive_good + line.split(local_drive_bad)[-1])
+                        line_new = local_drive_good + line.split(local_drive_bad)[-1]
+                    else:
+                        continue
+
+                    local_songs.add(song_name)
+                    pl_new.write(line_new)
 
             for line in pl_old:
                 song_name = line.strip().split('/')[-1]
