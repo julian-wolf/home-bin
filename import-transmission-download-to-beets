@@ -7,10 +7,9 @@
 BEET="/usr/local/bin/beet"
 
 MUSIC_DIR="/Volumes/Data HDD/Music"
+UNLISTENED_DIR="/Volumes/Data HDD/Unlistened Music"
 LOCAL_CONFIG="$MUSIC_DIR/beetsconfig-local.yaml"
 
-IMPORT="import"
-CONFIG="--config"
 OPTIONS="--copy --nowrite --noautotag --resume"
 
-$BEET $CONFIG="$LOCAL_CONFIG" $IMPORT $OPTIONS "$TR_TORRENT_DIR/$TR_TORRENT_NAME"
+$BEET --config="$LOCAL_CONFIG" import $OPTIONS "$TR_TORRENT_DIR/$TR_TORRENT_NAME"
