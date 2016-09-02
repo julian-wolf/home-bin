@@ -7,11 +7,15 @@
 # to decide how albums are sorted. By default they appear to sort in
 # reverse chronological order, which is backwards.
 #
+# If the date tags of two albums are equal, the Music app
+#
 # So far, this has not been successful...
 
 import os, sys
 
-from mutagen.easyid3 import EasyID3 as mutagen_id3
+# from mutagen.easyid3 import EasyID3 as mutagen_id3
+from mutagen.id3 import ID3 as mutagen_id3
+from mutagen.id3 import TYER, TDRC, TDAT, TALB, TSOA
 from string import lowercase as letters
 
 audio_endings = ('.mp3', '.m4a')
@@ -24,38 +28,25 @@ def main(path):
 
                 tags = mutagen_id3(filename)
 
-                sort_album = u''
-                if 'date' in tags.keys():
-                    sort_album += tags['date'][0] + ' - '
-                if 'album' in tags.keys():
-                    sort_album += tags['album'][0]
-                else:
-                    continue
+                album_tag = 'TALB'
+                date_tag = None
+                if   'TDRC' in tags.keys() and str(tags['TDRC'].text[0]) < '3000':
+                    date_tag = 'TDRC'
+                elif 'TYER' in tags.keys() and str(tags['TYER'].text[0]) < '3000':
+                    date_tag = 'TYER'
+                elif 'TDAT' in tags.keys() and str(tags['TDAT'].text[0]) < '3000':
+                    date_tag = 'TDAT'
 
-                tags['albumsort'] = [sort_album]
-                tags.save()
+                if date_tag and album_tag in tags.keys():
+                    sort_album = str(tags[date_tag].text[0]) + u' - ' + tags[album_tag].text[0]
+                    tags.setall('TSOA', [TSOA(text=sort_album)])
+                    tags.setall('TALB', [TALB(text=sort_album)])
 
-                # if 'date' in tags.keys():
-                #     date = tags['date'][0]
-                #     date_reversed = 2100 - int(float(date))
+                    tags.delall(date_tag)
+                    tags.setall('TDRC', [TDRC(text=u'9999')])
 
-                #     date_mangled = number_to_digits(date_reversed)
-                #     date_mangled += " " + date
+                    tags.save()
 
-                #     tags['date'] = [date_mangled]
-                #     tags.save()
-
-def number_to_digits(number):
-    assert(number > 0)
-
-    base = len(letters)
-    digits = []
-
-    while number:
-        digits.append(letters[number % base])
-        number /= base
-
-    return ''.join(reversed(digits))
 
 if __name__ == "__main__":
     main(sys.argv[1])
