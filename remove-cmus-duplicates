@@ -50,6 +50,8 @@ def main(playlist):
                     local_songs.add(song_name)
                     pl_new.write(line_new)
 
+            pl_old.seek(0)
+
             for line in pl_old:
                 song_name = line.strip().split('/')[-1]
                 if song_name not in local_songs and line.startswith(external_drive):

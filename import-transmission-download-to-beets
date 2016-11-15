@@ -7,7 +7,6 @@
 BEET="/usr/local/bin/beet"
 
 MUSIC_DIR="/Volumes/Data HDD/Music"
-UNLISTENED_DIR="/Volumes/Data HDD/Unlistened Music"
 LOCAL_CONFIG="$MUSIC_DIR/beetsconfig-local.yaml"
 
 OPTIONS="--copy --nowrite --noautotag --resume"
