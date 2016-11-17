@@ -7,16 +7,17 @@
 # to decide how albums are sorted. By default they appear to sort in
 # reverse chronological order, which is backwards.
 #
-# If the date tags of two albums are equal, the Music app
+# If the date tags of two albums are equal, the Music app sorts by the
+# album tag. This script works by setting all date tags to 9999 and
+# prepending the date of each song to its album name.
 #
-# So far, this has not been successful...
+# It's real sketchy, but it seems to work.
 
 import os, sys
 
 # from mutagen.easyid3 import EasyID3 as mutagen_id3
 from mutagen.id3 import ID3 as mutagen_id3
 from mutagen.id3 import TYER, TDRC, TDAT, TALB, TSOA
-from string import lowercase as letters
 
 audio_endings = ('.mp3', '.m4a')
 

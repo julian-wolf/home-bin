@@ -1,8 +1,8 @@
 #! /bin/bash
 
 # This script is called by Transmission upon the completion of any download.
-# It attempts to add import the downloaded files to my music library using
-# beets, failing silently if the triggering download comprises non-music files.
+# It attempts to import the downloaded files to my music library using beets
+# failing silently if the triggering download comprises non-music files.
 
 BEET="/usr/local/bin/beet"
 
