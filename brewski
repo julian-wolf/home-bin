@@ -1,0 +1,17 @@
+#! /bin/bash
+
+# This script updates homebrew and stuff.
+
+set -o nounset
+set -o errexit
+
+BREW="/usr/local/bin/brew"
+
+(set -x; $BREW update)
+
+outdated=$($BREW outdated)
+
+if [ "$outdated" != "" ]; then
+    (set -x; $BREW upgrade)
+    (set -x; $BREW cleanup)
+fi
