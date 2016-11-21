@@ -4,6 +4,8 @@
 # directory. It makes a symlink of each newly-added release to a separate
 # directory in order to track what I have and haven't listened to.
 
+set -o nounset
+
 MUSIC_DIR="/Volumes/Data HDD/Music"
 UNLISTENED_DIR="/Volumes/Data HDD/Unlistened Music"
 
@@ -13,9 +15,9 @@ IFS="
 "
 
 for dir in `find "$MUSIC_DIR" -mindepth 1 -maxdepth 1 -mtime -1h`; do
-    if [ -d $dir ]; then
+    if [ -d "$dir" ]; then
         alias_dir="$UNLISTENED_DIR/$(basename $dir)"
-        if [ ! -d $alias_dir ]; then
+        if [ ! -d "$alias_dir" ]; then
             echo "linking $dir" >> "$LOG"
             ln -s "$dir" "$alias_dir"
         fi
