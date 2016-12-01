@@ -14,40 +14,45 @@
 # It's real sketchy, but it seems to work.
 
 import os, sys
+import argparse
 
 # from mutagen.easyid3 import EasyID3 as mutagen_id3
 from mutagen.id3 import ID3 as mutagen_id3
 from mutagen.id3 import TYER, TDRC, TDAT, TALB, TSOA
 
 audio_endings = ('.mp3', '.m4a')
+possible_date_tags = ('TDRC', 'TYER', 'TDAT')
+album_tag = 'TALB'
 
 def main(path):
     for root, _, files in os.walk(path):
-        for name in files:
-            if name.endswith(audio_endings):
-                filename = os.path.join(root, name)
+        audio_files = (name for name in files if name.endswith(audio_endings))
+        for name in audio_files:
+            filename = os.path.join(root, name)
 
-                tags = mutagen_id3(filename)
+            tags = mutagen_id3(filename)
 
-                album_tag = 'TALB'
-                date_tag = None
-                if   'TDRC' in tags.keys() and str(tags['TDRC'].text[0]) < '3000':
-                    date_tag = 'TDRC'
-                elif 'TYER' in tags.keys() and str(tags['TYER'].text[0]) < '3000':
-                    date_tag = 'TYER'
-                elif 'TDAT' in tags.keys() and str(tags['TDAT'].text[0]) < '3000':
-                    date_tag = 'TDAT'
+            date_tag = None
+            for tag in possible_date_tags:
+                if (tag in tags.keys()
+                        and str(tags[tag].text[0]) < '3000'
+                        and date_tag is None):
+                    date_tag = tag
 
-                if date_tag and album_tag in tags.keys():
-                    sort_album = str(tags[date_tag].text[0]) + u' - ' + tags[album_tag].text[0]
-                    tags.setall('TSOA', [TSOA(text=sort_album)])
-                    tags.setall('TALB', [TALB(text=sort_album)])
+            if date_tag and album_tag in tags.keys():
+                sort_album = (str(tags[date_tag].text[0]) +
+                              u' - ' + tags[album_tag].text[0])
+                tags.setall('TSOA', [TSOA(text=sort_album)])
+                tags.setall('TALB', [TALB(text=sort_album)])
 
-                    tags.delall(date_tag)
-                    tags.setall('TDRC', [TDRC(text=u'9999')])
+                tags.delall(date_tag)
+                tags.setall('TDRC', [TDRC(text=u'9999')])
 
-                    tags.save()
+                tags.save()
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    parser = argparse.ArgumentParser(description="Fix iOS Music album sorting.")
+    parser.add_argument("path", help="Directory containing files to process.")
+    args = parser.parse_args()
+    main(args.path)
