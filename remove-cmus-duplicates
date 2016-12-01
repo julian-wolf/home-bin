@@ -38,29 +38,28 @@ def main(playlist):
     playlist_temp = random_filename(playlist.partition('.')[0])
     os.rename(playlist, playlist_temp)
 
-    with open(playlist_temp, 'rt') as pl_old:
-        with open(playlist, 'wt') as pl_new:
-            for line in pl_old:
-                song_name = get_song(line)
-                if song_name not in local_songs:
-                    if line.startswith(local_drive_good):
-                        line_new = line
-                    elif line.startswith(local_drive_bad):
-                        line_new = (local_drive_good +
-                                    line.split(local_drive_bad)[-1])
-                    else:
-                        continue
+    with open(playlist_temp, 'rt') as pl_old, open(playlist, 'wt') as pl_new:
+        for line in pl_old:
+            song_name = get_song(line)
+            if song_name not in local_songs:
+                if line.startswith(local_drive_good):
+                    line_new = line
+                elif line.startswith(local_drive_bad):
+                    line_new = (local_drive_good +
+                                line.split(local_drive_bad)[-1])
+                else:
+                    continue
 
-                    local_songs.add(song_name)
-                    pl_new.write(line_new)
+                local_songs.add(song_name)
+                pl_new.write(line_new)
 
-            pl_old.seek(0)
+        pl_old.seek(0)
 
-            for line in pl_old:
-                song_name = get_song(line)
-                if (song_name not in local_songs
-                        and line.startswith(external_drive)):
-                    pl_new.write(line)
+        for line in pl_old:
+            song_name = get_song(line)
+            if (song_name not in local_songs
+                    and line.startswith(external_drive)):
+                pl_new.write(line)
 
     os.remove(playlist_temp)
 
