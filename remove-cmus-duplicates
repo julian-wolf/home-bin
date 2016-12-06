@@ -20,7 +20,10 @@
 #
 # So far, it seems to work...
 
-import os, sys
+from __future__ import print_function
+
+import os
+import sys
 import argparse
 import sets
 from random import choice
@@ -32,7 +35,7 @@ external_drive = "/Volumes/WD_Passport_Wolf/Music/Releases"
 
 get_song = lambda line: line.strip().split('/')[-1]
 
-def main(playlist):
+def remove_cmus_duplicates(playlist):
     local_songs = sets.Set()
 
     playlist_temp = random_filename(playlist.partition('.')[0])
@@ -63,15 +66,17 @@ def main(playlist):
 
     os.remove(playlist_temp)
 
+
 def random_filename(base_name):
     while True:
         output = base_name + ''.join(choice(digits) for _ in range(5)) + '.temp'
         if not os.path.isfile(output):
             return output
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=("Remove Duplicate entries "
                                                   "from a cmus playlist file."))
     parser.add_argument("playlist", help="cmus playlist file to process.")
     args = parser.parse_args()
-    main(args.playlist)
+    remove_cmus_duplicates(args.playlist)

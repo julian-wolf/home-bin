@@ -13,7 +13,10 @@
 #
 # It's real sketchy, but it seems to work.
 
-import os, sys
+from __future__ import print_function
+
+import os
+import sys
 import argparse
 
 # from mutagen.easyid3 import EasyID3 as mutagen_id3
@@ -24,7 +27,7 @@ audio_endings = ('.mp3', '.m4a')
 possible_date_tags = ('TDRC', 'TYER', 'TDAT')
 album_tag = 'TALB'
 
-def main(path):
+def add_sort_album_tags(path):
     for root, _, files in os.walk(path):
         audio_files = (name for name in files if name.endswith(audio_endings))
         for name in audio_files:
@@ -55,4 +58,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fix iOS Music album sorting.")
     parser.add_argument("path", help="Directory containing files to process.")
     args = parser.parse_args()
-    main(args.path)
+    add_sort_album_tags(args.path)
