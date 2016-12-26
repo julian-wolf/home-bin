@@ -13,5 +13,5 @@ outdated=$($BREW outdated)
 
 if [ "$outdated" != "" ]; then
     (set -x; $BREW upgrade)
-    (set -x; $BREW cleanup)
+    (set -x; $BREW cleanup -s)
 fi

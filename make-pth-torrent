@@ -7,7 +7,6 @@
 # save me from having to build mktorrent from its HEAD just for the
 # source option, since I like sticking to what's available through
 # Homebrew when possible.
-# TODO: test this
 
 from __future__ import print_function
 
@@ -25,6 +24,12 @@ def make_pth_torrent(infile, outfile, announce, source):
 
     if not outfile.endswith(".torrent"):
         outfile += ".torrent"
+
+    for root, _, files in os.walk(infile):
+        osx_system_files = (name for name in files if name == ".DS_Store")
+        for name in osx_system_files:
+            filename = os.path.join(root, name)
+            os.remove(filename)
 
     mktorrent_command = "%s -p -a '%s' -o '%s' '%s' 2>&1" % (
             mktorrent, announce_url, outfile, infile)
