@@ -66,6 +66,5 @@ if __name__ == "__main__":
                         required=False, default=source_string)
     parser.add_argument("--announce", "-a", help="Announce url.",
                         required=False, default=announce_url)
-    parser.add_argument
     args = parser.parse_args()
     make_pth_torrent(args.infile, args.outfile, args.announce, args.source)
