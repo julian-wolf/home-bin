@@ -13,4 +13,6 @@ LOCAL_CONFIG="$MUSIC_DIR/beetsconfig-local.yaml"
 
 OPTIONS="--copy --nowrite --noautotag --resume"
 
-$BEET --config="$LOCAL_CONFIG" import $OPTIONS "$TR_TORRENT_DIR/$TR_TORRENT_NAME"
+LOG_FILE="/Users/julian/log/import-transmission-download-to-beets.log"
+
+$BEET --config="$LOCAL_CONFIG" --verbose import $OPTIONS "$TR_TORRENT_DIR/$TR_TORRENT_NAME" 2>>"$LOG_FILE"
