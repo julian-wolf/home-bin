@@ -25,7 +25,6 @@ from __future__ import print_function
 import os
 import sys
 import argparse
-import sets
 from random import choice
 from string import digits
 
@@ -36,7 +35,7 @@ external_drive = "/Volumes/WD_Passport_Wolf/Music/Releases"
 get_song = lambda line: line.strip().split('/')[-1]
 
 def remove_cmus_duplicates(playlist):
-    local_songs = sets.Set()
+    local_songs = set()
 
     playlist_temp = random_filename(playlist.partition('.')[0])
     os.rename(playlist, playlist_temp)
