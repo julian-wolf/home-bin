@@ -18,6 +18,7 @@ from __future__ import print_function
 import os
 import sys
 import argparse
+import traceback
 
 # from mutagen.easyid3 import EasyID3 as mutagen_id3
 from mutagen.id3 import ID3 as mutagen_id3
@@ -33,7 +34,14 @@ def add_sort_album_tags(path):
         for name in audio_files:
             filename = os.path.join(root, name)
 
-            tags = mutagen_id3(filename)
+            try:
+                tags = mutagen_id3(filename)
+
+            except Exception as exc:
+                print(traceback.format_exc())
+                print(exc)
+
+                continue
 
             date_tag = None
             for tag in possible_date_tags:
