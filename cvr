@@ -1,0 +1,31 @@
+#! /bin/bash
+
+CV=`which convert`
+ROTATE="-rotate"
+
+if ! (( $# == 2 )); then
+	echo "Usage: cvr angle file"
+	return 1
+fi
+
+angle="$1"
+file="$2"
+
+case "$angle" in
+[lL][eE][fF][tT]|[lL])
+	angle=270
+	;;
+[rR][iI][gG][hH][tT]|[rR])
+	angle=90
+	;;
+[fF][lL][iI][pP]|[fF])
+	angle=180
+	;;
+esac
+
+if ! (( $angle % 90 )); then
+	$CV $ROTATE "$angle" "$file" "$file"
+else
+	echo "Cannot rotate by $angle degrees. Use $CV directly."
+fi
+
