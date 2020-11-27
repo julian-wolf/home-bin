@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 # This script is meant to update the tags on songs which are to be sync'd
 # to my iPhone in order to allow for sane sorting.
